@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'prtr-path'
-version = '20121107-1'
+version = '20121212-1'
 -- LuaDist source
 source = {
-  tag = "20121107-1",
+  tag = "20121212-1",
   url = "git://github.com/LuaDist-testing/prtr-path.git"
 }
 -- Original source
 -- source = {
--- 	url = 'http://hg.piratery.net/path/get/7ee34f49972b9eb01291a8c7e16bd2c7b36ad007.tar.gz',
--- 	dir = 'doub-path-7ee34f49972b',
+-- 	url = 'http://hg.piratery.net/path/get/1921044d53622e6a0491a0fc515ce9c644c370d4.tar.gz',
+-- 	dir = 'doub-path-1921044d5362',
 -- }
 description = {
 	summary = "A simple module to manipulate file paths in Lua.",

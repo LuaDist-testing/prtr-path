@@ -1,84 +1,12 @@
-require 'markdown'
-
-local charset = 'UTF-8'
-local file_index = "index.html"
-
--- generate logo
-os.execute('convert -resize 128x128 logo.ps logo.png')
 
 ------------------------------------------------------------------------------
 
-function print(...)
-	local t = {...}
-	for i=1,select('#', ...) do
-		t[i] = tostring(t[i])
-	end
-	io.write(table.concat(t, '\t')..'\n')
-end
-
-function header()
-	print([[
-<?xml version="1.0" encoding="]]..charset..[["?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-lang="en">
-<head>
-<title>path @ piratery.net</title>
-<meta http-equiv="Content-Type" content="text/html; charset=]]..charset..[["/>
-<link rel="stylesheet" href="doc.css" type="text/css"/>
-</head>
-<body>
-<div class="chapter" id="header">
-<img width="128" height="128" alt="prtr-path" src="logo.png"/>
-<p>A simple module to manipulate file paths in Lua</p>
-<p class="bar">
-<a href="]]..file_index..[[">home</a> &middot;
-<a href="]]..file_index..[[#installation">installation</a> &middot;
-<a href="]]..file_index..[[#manual">manual</a>
-</p>
-</div>
-]])
-end
-
-function footer()
-	print([[
-<div class="chapter" id="footer">
-<small>Last update: ]]..os.date"%Y-%m-%d %H:%M:%S %Z"..[[</small>
-</div>
-</body>
-</html>
-]])
-end
-
-local chapterid = 0
-
-function chapter(id, title, text, sections, raw)
-	chapterid = chapterid+1
-	local text = text:gsub("%%chapterid%%", tostring(chapterid))
-	if not raw then
-		text = markdown(text)
-	end
-	if sections then
-		for _,section in ipairs(sections) do
-			section = section:gsub("%%chapterid%%", tostring(chapterid))
-			text = text..[[
-<div class="section">
-]]..markdown(section)..[[
-</div>]]
-		end
-	end
-	print([[
-<div class="chapter">
-<a id="]]..id..[["/><h1>]]..tostring(chapterid).." - "..title..[[</h1>
-]]..text..[[
-</div>
-]])
-end
+index {
+	name = 'path',
+	header = [[A simple module to manipulate file paths in Lua]],
+}
 
 ------------------------------------------------------------------------------
-
-io.output(file_index)
 
 header()
 
@@ -89,7 +17,7 @@ The name path is not original, but it reflects the purpose of the library. The p
 
 ## Support
 
-All support is done through the [Lua mailing list](http://www.lua.org/lua-l.html). If the traffic becomes too important a specialized mailing list will be created.
+All support is done through the [Lua mailing list](http://www.lua.org/lua-l.html).
 
 Feel free to ask for further developments. I can't guarantee that I'll develop everything you ask, but I want my code to be as useful as possible, so I'll do my best to help you. You can also send me request or bug reports (for code and documentation) directly at [jerome.vuarand@gmail.com](mailto:jerome.vuarand@gmail.com).
 
@@ -124,7 +52,7 @@ To use this module:
 
 Note that in the examples here we use the name `pathlib` in the code to reference the module itself and `path` to reference the path datatype. This is to avoid ambiguities. The module name however is `"path"`, and that name should be passed to `require` (as shown above).
 
-All `path` objects are immutable, but they are not interned like Lua strings, and such the semantics when used as keys in tables differ. To create a path object, one can either call the function `pathlib.split` to split a string, or assemble new paths from existing paths using the / operator. An empty `path` object is predefined with the name `pathlib.empty`.
+All `path` objects are immutable, but they are not interned like Lua strings, and as such the semantics when used as keys in tables differ. To create a path object, one can either call the function `pathlib.split` to split a string, or assemble new paths from existing paths using the / operator. An empty `path` object is predefined with the name `pathlib.empty`.
 
 ### pathlib.split ( string )
 
@@ -133,9 +61,10 @@ The `split` function takes a `string` as parameter, and converts it to an equiva
 If the path string following the root starts with a slash or a backslash, it is marked as absolute (UNC paths are always absolute).
 
     local lua = pathlib.split([[/usr/bin/lua]])
-    
+
+A convention used in the rest of this manual is to use the alias `P` for pathlib.split. It is defined as follows:
+
     local P = pathlib.split
-    
     local explorer = P[[C:\Windows\explorer.exe]]
 
 ### pathlib.empty
@@ -214,7 +143,7 @@ A `path` object may have an optional root. This root is a string that can be eit
 
 ### path:sub (i [, j])
 
-Returns a path containing the components of `path` in the range [i-j]. If `j` is omitted, it is the length of the `path`. If `i` is greater or equal to 2, the resulting path is relative and has no root. Otherwise it keeps the same `root` and `absolute` flag as `path`.
+Returns a path containing the components of `path` in the range [i-j]. If `j` is omitted, it is the length of the `path`. If `j` is negative, it is considered as an index from the end of the path (-1 being the last component, -2 the one before that, etc.). If `i` is greater or equal to 1, the resulting path is relative and has no root. To keep the same `root` and `absolute` flag as `path`, `i` must be 0 or negative. Therefore a convenient way to get the relative part of an absolute path is to call `path:sub(1)`.
 
 ### path1 == path2
 
@@ -247,7 +176,7 @@ footer()
 ------------------------------------------------------------------------------
 
 --[[
-Copyright (c) 2012 Jérôme Vuarand
+Copyright (c) Jérôme Vuarand
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
